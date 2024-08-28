@@ -1,0 +1,229 @@
+{% extends 'base.html'%}
+
+{% load static %}
+
+{% block content %}
+<!--Store Component-->
+<setion class="section-pagetop bg">
+    <div class="container">
+        {% if 'search' in request.path %}
+        <h2 class="title-page">Search Results</h2>
+        {% else %}
+         <h2 class="title-page">Our Store</h2>
+        {% endif %}
+    </div>
+</section>
+
+<section class="section-content padding-y">
+    <div class="container">
+    
+    <div class="row">
+        <aside class="col-md-3">
+            
+    <div class="card">
+        <article class="filter-group">
+            <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                    <i class="icon-control fa fa-chevron-down"></i>
+                    <h6 class="title">Categories</h6>
+                </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_1" style>
+                <div class="card-body">
+                    
+                    <ul class="list-menu">
+                        <li><a href="{% url 'store' %}">All products </a></li>
+                       
+                        {% for category in links %}
+                    <li><a href="{{ category.get_url }}">{{ category.category_name }} </a></li>
+                        {% endfor %}
+                    </ul>
+    
+                </div> <!-- card-body.// -->
+            </div>
+        </article> <!-- filter-group  .// -->
+     
+        <article class="filter-group">
+            <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
+                    <i class="icon-control fa fa-chevron-down"></i>
+                    <h6 class="title">Sizes </h6>
+                </a>
+            </header>
+            <div class="filter-content collapse show" id="collapse_4" style>
+    
+    <form action="{% url 'store' %}" method="GET" id="filter-form">
+        <div class="card-body">
+            <label class="checkbox-btn">
+                <input type="checkbox" name="size" value="S" {% if request.GET.size == 'S' %}checked{% endif %}>
+                <span class="btn btn-light">S</span>
+            </label>
+    
+            <label class="checkbox-btn">
+                <input type="checkbox" name="size" value="M" {% if request.GET.size == 'M' %}checked{% endif %}>
+                <span class="btn btn-light">M</span>
+            </label>
+    
+            <label class="checkbox-btn">
+                <input type="checkbox" name="size" value="L" {% if request.GET.size == 'L' %}checked{% endif %}>
+                <span class="btn btn-light">L</span>
+            </label>
+    
+            <label class="checkbox-btn">
+                <input type="checkbox" name="size" value="XXL" {% if request.GET.size == 'XXL' %}checked{% endif %}>
+                <span class="btn btn-light">XXL</span>
+            </label>
+    
+            <button type="submit" class="btn btn-block btn-primary">Apply</button>
+        </div>
+    </form>
+    
+  <!---->  
+  <article class="filter-group">
+    <header class="card-header">
+        <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+            <i class="icon-control fa fa-chevron-down"></i>
+            <h6 class="title">Price range</h6>
+        </a>
+    </header>
+    <div class="filter-content collapse show" id="collapse_3">
+        <form action="{% url 'store' %}" method="GET" id="price-filter-form">
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="min-price">Min</label>
+                        <select class="mr-2 form-control" id="min-price" name="min_price">
+                            <option value="0">€0</option>
+                            <option value="50">€50</option>
+                            <option value="100">€100</option>
+                            <option value="150">€150</option>
+                            <option value="200">€200</option>
+                            <option value="500">€500</option>
+                            <option value="1000">€1000</option>
+                        </select>
+                    </div>
+                    <div class="form-group text-right col-md-6">
+                        <label for="max-price">Max</label>
+                        <select class="mr-2 form-control" id="max-price" name="max_price">
+                            <option value="50">€50</option>
+                            <option value="100">€100</option>
+                            <option value="150">€150</option>
+                            <option value="200">€200</option>
+                            <option value="500">€500</option>
+                            <option value="1000">€1000</option>
+                            <option value="2000">€2000+</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-block btn-primary">Apply</button>
+            </div><!-- card-body.// -->
+        </form>
+    </div>
+</article>
+
+    </div> <!-- card.// -->
+    
+        </aside> <!-- col.// -->
+        <main class="col-md-9">
+    
+    <header class="border-bottom mb-4 pb-3">
+            <div class="form-inline">
+                <span class="mr-md-auto"><b>{{ product_count }} </b>   Items found.</span>
+                
+            </div>
+    </header><!-- sect-heading -->
+    
+    <div class="row">
+        {% if products %}
+            {% for product in products %}
+                <div class="col-md-4">
+                    <figure class="card card-product-grid {% if product.is_premium %}premium{% endif %}">
+                        <div class="img-wrap">
+                            <a href="{{product.get_url}}"><img src="{{ product.images.url }}"></a>
+                        </div> <!-- img-wrap.// -->
+                        <figcaption class="info-wrap">
+                            <div class="fix-height">
+                                <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+                                <div class="price mt-1">
+                                    {% if product.discounted_price %}
+                                        <span style="font-weight: bold; color: red;">€ {{ product.discounted_price }}</span>
+                                        <span style="text-decoration: line-through; color: gray; margin-left: 5px;">
+                                            € {{ product.price }}
+                                        </span>
+                                    {% else %}
+                                        € {{ product.price }}
+                                    {% endif %}
+                                </div>
+                                <a href="{{ product.get_url }}" class="btn btn-block btn-primary">View Details</a>
+                            </div>
+                        </figcaption>
+                    </figure>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div>
+                <h2>No results found</h2>
+            </div>
+        {% endif %}
+    </div> <!-- row end.// -->
+    
+    
+    <nav class="mt-4" aria-label="Page navigation sample">
+        {% if products.has_other_pages %}
+      <ul class="pagination">
+        {% if products.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+        {% endif %}
+
+        {% for i in products.paginator.page_range %}
+           {% if products.number == i %}
+             <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+             {% else %}
+             <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+             {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        {% endif %}
+      </ul>
+      {% endif %}
+    </nav>
+    
+        </main> <!-- col.// -->
+    
+    </div>
+    
+    </div> <!-- container .//  -->
+    </section>
+    <section class="section-name padding-y-sm">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <h3>Contact Seller</h3>
+                    <form method="POST" action="#">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_name">Your Name</label>
+                            <input type="text" name="name" id="id_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Your Email</label>
+                            <input type="email" name="email" id="id_email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_message">Message</label>
+                            <textarea name="message" id="id_message" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{%endblock%}
